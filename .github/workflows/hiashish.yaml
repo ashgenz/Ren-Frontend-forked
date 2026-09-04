@@ -1,0 +1,59 @@
+name: Deploy React Frontend to Elastic Beanstalk environment for all types of env. uses(test,deploy,production)
+
+on:
+  push:
+    branches:
+      - main # Triggers when you push code to the main branch
+
+env:
+  AWS_REGION: "ap-south-1" # Replace with your Elastic Beanstalk region
+  EB_ENVIRONMENT_NAME: "Renfrontendforkedapplication-env" # Replace with your EB environment name
+  EB_APPLICATION_NAME: "Ren_frontend_forked_application" # Replace with your EB application name
+  WORKING_DIR: "Ren2026New"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Pull repository code into the runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # 3. Install dependencies and build React app
+      - name: Install and Build React App
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+          npm ci
+          npm run build
+
+      # 4. Create a deployment ZIP package containing built files & package configurations
+      - name: Create Zip Package
+        working-directory: ${{ env.WORKING_DIR }}
+        run: zip -r deploy.zip build/ package.json package-lock.json
+
+      # 5. Configure AWS Credentials using repository secrets
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_EB_ACESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_EB_SECRET }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 6. Deploy the generated ZIP package to Elastic Beanstalk
+      - name: Deploy to Elastic Beanstalk
+        uses: Einondes/beanstalk-deploy@v22
+        with:
+          aws_access_key: ${{ secrets.AWS_EB_ACESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_EB_SECRET }}
+          region: ${{ env.AWS_REGION }}
+          application_name: ${{ env.EB_APPLICATION_NAME }}
+          environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
+          version_label: "deploy-${{ github.sha }}"
+          deployment_package: "${{ env.WORKING_DIR }}/deploy.zip"
