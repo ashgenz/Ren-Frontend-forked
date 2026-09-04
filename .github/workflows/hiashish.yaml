@@ -5,7 +5,7 @@ on:
     branches:
       - master # Triggers when you push code to the main branch
 
-env:
+env: 
   AWS_REGION: "ap-south-1" # Replace with your Elastic Beanstalk region
   EB_ENVIRONMENT_NAME: "Renfrontendforkedapplication-env" # Replace with your EB environment name
   EB_APPLICATION_NAME: "Ren_frontend_forked_application" # Replace with your EB application name
