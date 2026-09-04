@@ -48,7 +48,7 @@ jobs:
 
       # 6. Deploy the generated ZIP package to Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
-        uses: Einondes/beanstalk-deploy@v22
+        uses: einaregilsson/beanstalk-deploy@v22
         with:
           aws_access_key: ${{ secrets.AWS_EB_ACESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_EB_SECRET }}
