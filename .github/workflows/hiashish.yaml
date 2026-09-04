@@ -3,7 +3,7 @@ name: Deploy React Frontend to Elastic Beanstalk environment for all types of en
 on:
   push:
     branches:
-      - main # Triggers when you push code to the main branch
+      - master # Triggers when you push code to the main branch
 
 env:
   AWS_REGION: "ap-south-1" # Replace with your Elastic Beanstalk region
